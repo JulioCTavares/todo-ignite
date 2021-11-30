@@ -90,6 +90,19 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
   return response.status(201).send();
 });
 
-app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {});
+app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
+  const { id } = request.params;
+  const { user } = request;
+
+  const todo = user.todos.findIndex((todo) => todo.id === id);
+
+  if (todo === -1) {
+    return response.status(404).json({ error: "Todo Not Found" });
+  }
+
+  user.todos.splice(todo, 1);
+
+  return response.status(204).json();
+});
 
 module.exports = app;
